@@ -6,10 +6,13 @@ A filterable dropdown selector
 
 Passable Properties:
 
-value:      The starting / default value
-onChange:   Function to run when the value changes (returns value as the only argument)
-expanded    Always show the list of choices as expanded when focused
-styleSheet  A stylesheet to override the main stylesheet
+placeholder {string}    : Placeholder text to show when the input is empty
+value {string}          : An optional starting value
+expanded {boolean}      : When true, shows the full options list when the input gains focus. When false, 
+                          the options list only appears when the user is inputting data
+onChange {function}     : Fires when the value in the dropdown changes
+styleSheet {object}     : A CSS style sheet to append to the native Dropdown style sheet,
+                          for overriding CSS elements
 
 Copyright 2022, Devin Crowley
 
@@ -30,7 +33,7 @@ import { cloneElement, options } from 'preact';
 import { useState, useEffect } from 'preact/hooks';
 import style from './dropdown.css';
 
-function Dropdown( {children, value, onChange, expanded, styleSheet = {}} ) {
+function Dropdown( {placeholder, children, value, onChange, expanded, styleSheet = {}} ) {
 
     // Append any custom stylesheets passed via the styleSheet prop
     styleSheet = {...style, ...styleSheet};
@@ -61,6 +64,19 @@ function Dropdown( {children, value, onChange, expanded, styleSheet = {}} ) {
     return (
         <div className={styleSheet.dropdown}>
             <div className={styleSheet.input}>
+
+                {/* Placeholder label */}
+                {state.filter ? null : 
+                    <label 
+                    className={style.placeholder}
+                    onClick={evt=>{
+                        domElement.input.focus();
+                    }}
+                    >
+                        {placeholder}
+                    </label>
+                }
+
 
                 {/* The filter/search input for filtering the options in the list */}
                 <input 
