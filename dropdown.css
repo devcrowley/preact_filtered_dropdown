@@ -83,12 +83,19 @@
   user-select: none;
 }
 
-.dropdown option {
+.dropdown .option {
   color: black;
   padding: 0.5em;
 }
 
-.dropdown option:hover {
+.dropdown .option:hover {
   color: blue;
   background-color: #c8e6ff;
+}
+
+.dropdown .placeholder {
+  position: absolute;
+  height: 2em;
+  padding: 0.45em;
+  color: rgba(0, 0, 0, 0.5);
 }
