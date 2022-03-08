@@ -11,6 +11,8 @@ The dropdown component relies on a list of child elements.  Typically you'd want
 Note that this component was originally designed for Preact, but it can be easily modified for React by changing the includes at the top of the dropdown.jsx file.
 
 ## Passable Properties
+
+* placeholder {string} : Placeholder text to show when the input is empty
 * value {string} : An optional starting value
 * expanded {boolean} : When true, shows the full options list when the input gains focus.  When false, the options list only appears when the user is inputting data
 * onChange {function} : Fires when the value in the dropdown changes
