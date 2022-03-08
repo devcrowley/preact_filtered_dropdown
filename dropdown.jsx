@@ -35,13 +35,20 @@ function Dropdown( {children, value, onChange, expanded, styleSheet = {}} ) {
     // Append any custom stylesheets passed via the styleSheet prop
     styleSheet = {...style, ...styleSheet};
 
+    // If the user passed a value, try and find a child element with the same value
+    // and set its inner text as the input value
+    let initialFilter = "";
+    if(value) {
+        initialFilter = findChildByValue(children, value).text;
+    }
+
     // Give access to all states and setStates to child elements
     const state = {};
     state.onChange = onChange;
     state.alwaysExpanded = expanded;
     [state.expanded, state.setExpanded] = useState(false);
-    [state.filter, state.setFilter] = useState("");
-    [state.value, state.setValue] = useState("");
+    [state.filter, state.setFilter] = useState(initialFilter);
+    [state.value, state.setValue] = useState(value || "");
 
     // Access to DOM elements to change stylings after rendering as needed
     const domElement = {};
@@ -85,6 +92,7 @@ function Dropdown( {children, value, onChange, expanded, styleSheet = {}} ) {
                 <button className={styleSheet.btn_expand}
                 onClick={()=>{
                     state.setExpanded(!state.expanded);
+                    domElement.input.focus();
                 }}
                 ></button>
 
@@ -124,20 +132,43 @@ function FilteredChildren({children, state}) {
     // Add events to all child elements (options) to handle clicks
     children.forEach(c=>{
         if(c.props.children.join('').toLowerCase().trim().includes(state.filter.toLowerCase().trim())) {
-            const childClone = cloneElement(c, { onMouseDown: handleClick });
+            const childClone = cloneElement(c, { onMouseDown: handleClick, className: c.props.className + ' ' + style.option});
             options.push(childClone);
         }
     })
 
     // Click handler for all child elements (options)
     function handleClick(evt) {
-        state.setValue(evt.target.value);
+        const value = evt.target.value || evt.target.getAttribute('value');
+        state.setValue(value);
         state.setFilter(evt.target.innerText);
         state.setExpanded(false);
-        if(state.onChange) state.onChange(evt.target.value);
+        if(state.onChange) state.onChange(value);
     }
 
     return options;
+}
+
+/**
+ * Locates a child element based on its value
+ * @param {array} children 
+ * @param {string} value 
+ * @returns object with two keys:  child (component) and its displayed text
+ */
+function findChildByValue(children, value) {
+    const retVal = {
+        child: null,
+        text: ""
+    };
+
+    children.forEach(c=>{
+        if(c.props.value === value) {
+            retVal.child = c;
+            retVal.text = c.props.children.join('');
+        }
+    });
+
+    return retVal;
 }
 
 export default Dropdown;
