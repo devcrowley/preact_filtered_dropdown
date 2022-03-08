@@ -29,7 +29,7 @@ text together which can't be changed through simple css or attributes
 
 */
 
-import { cloneElement, options } from 'preact';
+import { cloneElement } from 'preact';
 import { useState, useEffect } from 'preact/hooks';
 import style from './dropdown.css';
 
