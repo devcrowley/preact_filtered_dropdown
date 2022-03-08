@@ -1,4 +1,4 @@
-# preact_filtered_dropdown
+# Preact Filtered Dropdown List
 
 A dropdown for React/Preact with a filtered input
 
@@ -6,7 +6,7 @@ While there is a similar native HTML5 element for filtered dropdowns (datalist) 
 
 ## Usage
 
-The dropdown component relies on a list of child elements.  Typically you'd want to use `<option>` tags, but it should work with any tag as long as you provide a `value` attribute.  This allows for lists of other elements such as hyperlinks or images (untested on images...)
+The dropdown component relies on a list of child elements.  Typically you'd want to use `<option>` tags, but it should work with any tag as long as you provide a `value` attribute.  This allows for lists of other elements such as hyperlinks
 
 Note that this component was originally designed for Preact, but it can be easily modified for React by changing the includes at the top of the dropdown.jsx file.
 
