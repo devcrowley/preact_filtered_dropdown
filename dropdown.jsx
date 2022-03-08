@@ -14,7 +14,7 @@ onChange {function}     : Fires when the value in the dropdown changes
 styleSheet {object}     : A CSS style sheet to append to the native Dropdown style sheet,
                           for overriding CSS elements
 
-Copyright 2022, Devin Crowley
+Created by Devin Crowley
 
 Developer NOTE:  Similar functionality already exists natively in HTML5, but the dropdown.jsx
 version has some fancy stylings and handlers.  Also, the native dropdown shows values AND value
