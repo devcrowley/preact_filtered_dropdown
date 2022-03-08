@@ -86,7 +86,7 @@
         user-select: none;
     }
 
-    option {
+    .option {
         color: black;
         &:hover {
             color: blue;
@@ -95,8 +95,11 @@
         padding: 0.5em;
     }
 
-    button {
-
+    .placeholder {
+        position: absolute;
+        height: 2em;
+        padding: 0.45em;
+        color: rgba(0,0,0,0.5);
     }
 
 }
