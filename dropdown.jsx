@@ -56,9 +56,14 @@ function Dropdown( {placeholder, children, value, onChange, expanded, styleSheet
     // Access to DOM elements to change stylings after rendering as needed
     const domElement = {};
 
-    // Sets the width of the dropdown to match the full inout area
+    // Sets the width of the dropdown to match the full input area and prevents going outside the window
     useEffect(()=>{
-        domElement.options.style.width = domElement.input.getBoundingClientRect().width - 1 + "px";
+        const inputBBox = domElement.input.getBoundingClientRect();
+        const optionsBBox = domElement.options.getBoundingClientRect();
+        domElement.options.style.width = inputBBox.width - 1 + "px";
+        if(optionsBBox.height + optionsBBox.y > window.innerHeight - 10) {
+            domElement.options.style.height = (window.innerHeight - 10 - optionsBBox.y) + "px";
+        }
     })
 
     return (
