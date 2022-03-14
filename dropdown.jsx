@@ -10,6 +10,7 @@ placeholder {string}    : Placeholder text to show when the input is empty
 value {string}          : An optional starting value
 expanded {boolean}      : When true, shows the full options list when the input gains focus. When false, 
                           the options list only appears when the user is inputting data
+disableFiltering {boolean} : When true, always show the full unfiltered options list without hiding any options
 onChange {function}     : Fires when the value in the dropdown changes
 styleSheet {object}     : A CSS style sheet to append to the native Dropdown style sheet,
                           for overriding CSS elements
@@ -33,7 +34,7 @@ import { cloneElement } from 'preact';
 import { useState, useEffect } from 'preact/hooks';
 import style from './dropdown.css';
 
-function Dropdown( {placeholder, children = [], value, onChange, expanded, styleSheet = {}} ) {
+function Dropdown( {placeholder, children = [], value, onChange, expanded, disableFiltering = false, styleSheet = {}} ) {
 
     // Append any custom stylesheets passed via the styleSheet prop
     styleSheet = {...style, ...styleSheet};
@@ -132,7 +133,7 @@ function Dropdown( {placeholder, children = [], value, onChange, expanded, style
                 domElement.options = elem;
             }}
             >
-                <FilteredChildren state={state}>{children}</FilteredChildren>
+                <FilteredChildren disableFiltering={disableFiltering} state={state}>{children}</FilteredChildren>
             </div>
             
         </div>
@@ -155,8 +156,9 @@ function Dropdown( {placeholder, children = [], value, onChange, expanded, style
  * @param {*} param0 
  * @returns 
  */
-function FilteredChildren({children, state}) {
+function FilteredChildren({children, state, disableFiltering}) {
     if(!Array.isArray(children) || children.length < 1) return [];
+
     const options = [];
 
     
@@ -164,7 +166,7 @@ function FilteredChildren({children, state}) {
     // Add events to all child elements (options) to handle clicks
     children.forEach(c=>{
         const compare = textContent(c);
-        if(compare.includes(state.filter.toLowerCase().trim())) {
+        if(compare.includes(state.filter.toLowerCase().trim()) || disableFiltering) {
             const childClone = cloneElement(c, { onMouseDown: handleClick, className: c.props.className + ' ' + style.option});
             options.push(childClone);
         }
