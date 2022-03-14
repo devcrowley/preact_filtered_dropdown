@@ -33,7 +33,7 @@ import { cloneElement } from 'preact';
 import { useState, useEffect } from 'preact/hooks';
 import style from './dropdown.css';
 
-function Dropdown( {placeholder, children, value, onChange, expanded, styleSheet = {}} ) {
+function Dropdown( {placeholder, children = [], value, onChange, expanded, styleSheet = {}} ) {
 
     // Append any custom stylesheets passed via the styleSheet prop
     styleSheet = {...style, ...styleSheet};
@@ -58,13 +58,20 @@ function Dropdown( {placeholder, children, value, onChange, expanded, styleSheet
 
     // Sets the width of the dropdown to match the full input area and prevents going outside the window
     useEffect(()=>{
+        resizeToBounds();
+    })
+
+    function resizeToBounds() {
         const inputBBox = domElement.input.getBoundingClientRect();
         const optionsBBox = domElement.options.getBoundingClientRect();
+        const height = domElement.options.scrollHeight;
         domElement.options.style.width = inputBBox.width - 1 + "px";
-        if(optionsBBox.height + optionsBBox.y > window.innerHeight - 10) {
+        if(height + optionsBBox.y > window.innerHeight - 10) {
             domElement.options.style.height = (window.innerHeight - 10 - optionsBBox.y) + "px";
+        } else {
+            domElement.options.style.height = '';
         }
-    })
+    }
 
     return (
         <div className={styleSheet.dropdown}>
@@ -110,12 +117,12 @@ function Dropdown( {placeholder, children, value, onChange, expanded, styleSheet
                 ></div>
 
                 {/* A button for expanding the options list */}
-                <button className={styleSheet.btn_expand}
+                <div className={styleSheet.btn_expand}
                 onClick={()=>{
                     state.setExpanded(!state.expanded);
                     domElement.input.focus();
                 }}
-                ></button>
+                ></div>
 
             </div>
 
@@ -139,6 +146,7 @@ function Dropdown( {placeholder, children, value, onChange, expanded, styleSheet
         }
         state.setExpanded(true);
         state.setFilter(evt.target.value);
+        resizeToBounds();
     }
 }
 
@@ -148,11 +156,15 @@ function Dropdown( {placeholder, children, value, onChange, expanded, styleSheet
  * @returns 
  */
 function FilteredChildren({children, state}) {
+    if(!Array.isArray(children) || children.length < 1) return [];
     const options = [];
+
+    
 
     // Add events to all child elements (options) to handle clicks
     children.forEach(c=>{
-        if(c.props.children.join('').toLowerCase().trim().includes(state.filter.toLowerCase().trim())) {
+        const compare = textContent(c);
+        if(compare.includes(state.filter.toLowerCase().trim())) {
             const childClone = cloneElement(c, { onMouseDown: handleClick, className: c.props.className + ' ' + style.option});
             options.push(childClone);
         }
@@ -177,19 +189,40 @@ function FilteredChildren({children, state}) {
  * @returns object with two keys:  child (component) and its displayed text
  */
 function findChildByValue(children, value) {
+
+    if(!Array.isArray(children) || children.length < 1) return {child: null, text: ""};
+
     const retVal = {
         child: null,
         text: ""
     };
 
     children.forEach(c=>{
+        if(!c.props) return;
         if(c.props.value === value) {
             retVal.child = c;
-            retVal.text = c.props.children.join('');
+            retVal.text = textContent(c);
         }
     });
 
     return retVal;
+}
+
+
+// Get the complete text content of a React element and its children, similar to native domelement.innerText
+function textContent(elem) {
+    if (!elem) {
+      return '';
+    }
+    if (typeof elem === 'string') {
+      return elem;
+    }
+
+    const children = elem.props && elem.props.children;
+    if (children instanceof Array) {
+      return children.map(textContent).join('');
+    }
+    return textContent(children);
 }
 
 export default Dropdown;
